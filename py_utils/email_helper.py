@@ -4,6 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from typing import Optional
 import ssl
 
+
 class EmailHelper:
     """A helper class for sending emails via SMTP."""
 
@@ -13,7 +14,7 @@ class EmailHelper:
         port: int = 25,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        use_tls: bool = False
+        use_tls: bool = False,
     ) -> smtplib.SMTP:
         """
         Set up an SMTP connection.
@@ -30,7 +31,9 @@ class EmailHelper:
         """
         try:
             if use_tls:
-                server = smtplib.SMTP_SSL(smtp_server, port, context=ssl.create_default_context())
+                server = smtplib.SMTP_SSL(
+                    smtp_server, port, context=ssl.create_default_context()
+                )
             else:
                 server = smtplib.SMTP(smtp_server, port)
                 if username and password:
@@ -46,7 +49,7 @@ class EmailHelper:
         to_addr: str,
         subject: str,
         body: str,
-        html_body: Optional[str] = None
+        html_body: Optional[str] = None,
     ) -> bool:
         """
         Send an email using the provided SMTP server.
@@ -64,23 +67,24 @@ class EmailHelper:
         """
         try:
             msg = MIMEMultipart("alternative")
-            msg['Subject'] = subject
-            msg['From'] = from_addr
-            msg['To'] = to_addr
+            msg["Subject"] = subject
+            msg["From"] = from_addr
+            msg["To"] = to_addr
 
             # Attach plain text body
-            text_part = MIMEText(body, 'plain')
+            text_part = MIMEText(body, "plain")
             msg.attach(text_part)
 
             # Attach HTML body if provided
             if html_body:
-                html_part = MIMEText(html_body, 'html')
+                html_part = MIMEText(html_body, "html")
                 msg.attach(html_part)
 
             server.sendmail(from_addr, to_addr, msg.as_string())
             return True
         except Exception as e:
             raise Exception(f"Failed to send email: {str(e)}")
+
 
 # Convenience function for quick email sending
 def send_quick_email(
@@ -93,7 +97,7 @@ def send_quick_email(
     username: Optional[str] = None,
     password: Optional[str] = None,
     use_tls: bool = False,
-    html_body: Optional[str] = None
+    html_body: Optional[str] = None,
 ) -> bool:
     """
     Quick function to send an email with minimal setup.
@@ -116,7 +120,9 @@ def send_quick_email(
     server = None
     try:
         server = EmailHelper.setup_smtp(smtp_server, port, username, password, use_tls)
-        result = EmailHelper.send_email(server, from_addr, to_addr, subject, body, html_body)
+        result = EmailHelper.send_email(
+            server, from_addr, to_addr, subject, body, html_body
+        )
         return result
     finally:
         if server:

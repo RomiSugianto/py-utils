@@ -1,4 +1,5 @@
-from py_utils import get_logger
+from py_utils import get_logger, Housekeeper
+
 
 def main():
     # Get a pre-configured logger
@@ -12,6 +13,8 @@ def main():
     # Example with custom name
     custom_logger = get_logger("my_module")
     custom_logger.info("Logging from my_module")
+
+    Housekeeper.housekeep_by_count("logs", keep_count=3, confirm=False)
 
 
 if __name__ == "__main__":

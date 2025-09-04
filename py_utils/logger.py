@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from typing import Optional
 
+
 class Logger:
     """A helper class for setting up consistent logging across projects."""
 
@@ -11,7 +12,7 @@ class Logger:
         name: str = "app",
         level: int = logging.INFO,
         log_file: Optional[str] = None,
-        format_string: str = "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
+        format_string: str = "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
     ) -> logging.Logger:
         """
         Set up a logger with consistent formatting and file output.
@@ -69,6 +70,7 @@ class Logger:
 
         timestamp = datetime.now().strftime("%Y%m%d")
         return os.path.join(base_dir, "logs", f"app_{timestamp}.log")
+
 
 # Convenience function for quick setup
 def get_logger(name: str = "app", log_file: Optional[str] = None) -> logging.Logger:

@@ -8,7 +8,7 @@ class TestEmailHelper:
 
     def test_setup_smtp_basic(self):
         """Test basic SMTP setup without authentication."""
-        with patch('smtplib.SMTP') as mock_smtp:
+        with patch("smtplib.SMTP") as mock_smtp:
             mock_server = Mock()
             mock_smtp.return_value = mock_server
 
@@ -19,7 +19,7 @@ class TestEmailHelper:
 
     def test_setup_smtp_with_tls(self):
         """Test SMTP setup with TLS encryption."""
-        with patch('smtplib.SMTP_SSL') as mock_smtp_ssl:
+        with patch("smtplib.SMTP_SSL") as mock_smtp_ssl:
             mock_server = Mock()
             mock_smtp_ssl.return_value = mock_server
 
@@ -32,18 +32,19 @@ class TestEmailHelper:
             assert call_args[0][0] == "smtp.example.com"
             assert call_args[0][1] == 465
             # SSL context should be passed
-            assert 'context' in call_args[1]
+            assert "context" in call_args[1]
 
     def test_setup_smtp_with_auth(self):
         """Test SMTP setup with authentication."""
-        with patch('smtplib.SMTP') as mock_smtp:
+        with patch("smtplib.SMTP") as mock_smtp:
             mock_server = Mock()
             mock_smtp.return_value = mock_server
 
             result = EmailHelper.setup_smtp(
-                "smtp.example.com", 25,
+                "smtp.example.com",
+                25,
                 username="test@example.com",
-                password="password123"
+                password="password123",
             )
 
             assert result == mock_server
@@ -51,7 +52,7 @@ class TestEmailHelper:
 
     def test_setup_smtp_failure(self):
         """Test SMTP setup failure handling."""
-        with patch('smtplib.SMTP') as mock_smtp:
+        with patch("smtplib.SMTP") as mock_smtp:
             mock_smtp.side_effect = Exception("Connection failed")
 
             with pytest.raises(Exception, match="Failed to setup SMTP connection"):
@@ -66,7 +67,7 @@ class TestEmailHelper:
             from_addr="sender@example.com",
             to_addr="recipient@example.com",
             subject="Test Subject",
-            body="Test Body"
+            body="Test Body",
         )
 
         assert result is True
@@ -85,7 +86,7 @@ class TestEmailHelper:
             to_addr="recipient@example.com",
             subject="Test Subject",
             body="Plain text body",
-            html_body="<h1>HTML Body</h1>"
+            html_body="<h1>HTML Body</h1>",
         )
 
         assert result is True
@@ -102,15 +103,15 @@ class TestEmailHelper:
                 from_addr="sender@example.com",
                 to_addr="recipient@example.com",
                 subject="Test Subject",
-                body="Test Body"
+                body="Test Body",
             )
 
 
 class TestSendQuickEmail:
     """Test cases for the send_quick_email convenience function."""
 
-    @patch('py_utils.email_helper.EmailHelper.setup_smtp')
-    @patch('py_utils.email_helper.EmailHelper.send_email')
+    @patch("py_utils.email_helper.EmailHelper.setup_smtp")
+    @patch("py_utils.email_helper.EmailHelper.send_email")
     def test_send_quick_email_basic(self, mock_send, mock_setup):
         """Test basic quick email sending."""
         mock_server = Mock()
@@ -122,7 +123,7 @@ class TestSendQuickEmail:
             from_addr="sender@example.com",
             to_addr="recipient@example.com",
             subject="Test Subject",
-            body="Test Body"
+            body="Test Body",
         )
 
         assert result is True
@@ -130,8 +131,8 @@ class TestSendQuickEmail:
         mock_send.assert_called_once()
         mock_server.quit.assert_called_once()
 
-    @patch('py_utils.email_helper.EmailHelper.setup_smtp')
-    @patch('py_utils.email_helper.EmailHelper.send_email')
+    @patch("py_utils.email_helper.EmailHelper.setup_smtp")
+    @patch("py_utils.email_helper.EmailHelper.send_email")
     def test_send_quick_email_with_auth(self, mock_send, mock_setup):
         """Test quick email with authentication."""
         mock_server = Mock()
@@ -146,14 +147,16 @@ class TestSendQuickEmail:
             body="Test Body",
             username="user@example.com",
             password="password123",
-            use_tls=True
+            use_tls=True,
         )
 
         assert result is True
-        mock_setup.assert_called_once_with("smtp.example.com", 25, "user@example.com", "password123", True)
+        mock_setup.assert_called_once_with(
+            "smtp.example.com", 25, "user@example.com", "password123", True
+        )
 
-    @patch('py_utils.email_helper.EmailHelper.setup_smtp')
-    @patch('py_utils.email_helper.EmailHelper.send_email')
+    @patch("py_utils.email_helper.EmailHelper.setup_smtp")
+    @patch("py_utils.email_helper.EmailHelper.send_email")
     def test_send_quick_email_server_cleanup(self, mock_send, mock_setup):
         """Test that server is properly closed even on failure."""
         mock_server = Mock()
@@ -166,7 +169,7 @@ class TestSendQuickEmail:
                 from_addr="sender@example.com",
                 to_addr="recipient@example.com",
                 subject="Test Subject",
-                body="Test Body"
+                body="Test Body",
             )
 
         # Server should still be closed

@@ -26,8 +26,10 @@ class TestHousekeeper:
         recent_file = test_dir / "recent.txt"
         recent_file.write_text("test content")
 
-        with patch('os.remove') as mock_remove:
-            result = Housekeeper.housekeep_by_age(str(test_dir), days_old=7, confirm=False)
+        with patch("os.remove") as mock_remove:
+            result = Housekeeper.housekeep_by_age(
+                str(test_dir), days_old=7, confirm=False
+            )
 
             # Should not delete recent files
             mock_remove.assert_not_called()
@@ -45,15 +47,17 @@ class TestHousekeeper:
         # Mock the file modification time to be old (10 days ago)
         old_timestamp = (datetime.now() - timedelta(days=10)).timestamp()
 
-        with patch.object(Path, 'rglob') as mock_rglob:
+        with patch.object(Path, "rglob") as mock_rglob:
             mock_file = MagicMock()
             mock_file.is_file.return_value = True
             mock_file.stat.return_value.st_mtime = old_timestamp
             mock_file.__str__ = lambda: str(old_file)
             mock_rglob.return_value = [mock_file]
 
-            with patch('os.remove') as mock_remove:
-                result = Housekeeper.housekeep_by_age(str(test_dir), days_old=7, confirm=False)
+            with patch("os.remove") as mock_remove:
+                result = Housekeeper.housekeep_by_age(
+                    str(test_dir), days_old=7, confirm=False
+                )
 
                 # Should delete old files
                 mock_remove.assert_called_once()
@@ -69,7 +73,9 @@ class TestHousekeeper:
         empty_dir = tmp_path / "empty"
         empty_dir.mkdir()
 
-        result = Housekeeper.housekeep_by_count(str(empty_dir), keep_count=5, confirm=False)
+        result = Housekeeper.housekeep_by_count(
+            str(empty_dir), keep_count=5, confirm=False
+        )
         assert result == 0
 
     def test_housekeep_by_count_fewer_files_than_keep(self, tmp_path):
@@ -82,8 +88,10 @@ class TestHousekeeper:
             file_path = test_dir / f"file_{i}.txt"
             file_path.write_text(f"content {i}")
 
-        with patch('os.remove') as mock_remove:
-            result = Housekeeper.housekeep_by_count(str(test_dir), keep_count=5, confirm=False)
+        with patch("os.remove") as mock_remove:
+            result = Housekeeper.housekeep_by_count(
+                str(test_dir), keep_count=5, confirm=False
+            )
 
             # Should not delete any files
             mock_remove.assert_not_called()
@@ -99,18 +107,22 @@ class TestHousekeeper:
             file_path = test_dir / f"file_{i}.txt"
             file_path.write_text(f"content {i}")
 
-        with patch.object(Path, 'rglob') as mock_rglob:
+        with patch.object(Path, "rglob") as mock_rglob:
             mock_files = []
             for i in range(7):
                 mock_file = MagicMock()
                 mock_file.is_file.return_value = True
-                mock_file.stat.return_value.st_mtime = datetime.now().timestamp() - i * 3600
+                mock_file.stat.return_value.st_mtime = (
+                    datetime.now().timestamp() - i * 3600
+                )
                 mock_file.__str__ = lambda i=i: str(test_dir / f"file_{i}.txt")
                 mock_files.append(mock_file)
             mock_rglob.return_value = mock_files
 
-            with patch('os.remove') as mock_remove:
-                result = Housekeeper.housekeep_by_count(str(test_dir), keep_count=3, confirm=False)
+            with patch("os.remove") as mock_remove:
+                result = Housekeeper.housekeep_by_count(
+                    str(test_dir), keep_count=3, confirm=False
+                )
 
                 # Should delete 4 oldest files (keep 3 newest)
                 assert mock_remove.call_count == 4
@@ -125,7 +137,7 @@ class TestHousekeeper:
 class TestCleanupDirectory:
     """Test cases for the cleanup_directory convenience function."""
 
-    @patch('py_utils.housekeeper.Housekeeper.housekeep_by_age')
+    @patch("py_utils.housekeeper.Housekeeper.housekeep_by_age")
     def test_cleanup_directory_by_age(self, mock_housekeep_age):
         """Test cleanup_directory with age-based cleanup."""
         mock_housekeep_age.return_value = 5
@@ -135,7 +147,7 @@ class TestCleanupDirectory:
         mock_housekeep_age.assert_called_once_with("/test/dir", 7)
         assert result == 5
 
-    @patch('py_utils.housekeeper.Housekeeper.housekeep_by_count')
+    @patch("py_utils.housekeeper.Housekeeper.housekeep_by_count")
     def test_cleanup_directory_by_count(self, mock_housekeep_count):
         """Test cleanup_directory with count-based cleanup."""
         mock_housekeep_count.return_value = 3
@@ -155,7 +167,9 @@ class TestCleanupDirectory:
 
     def test_cleanup_directory_both_parameters(self):
         """Test cleanup_directory with both parameters (should use age)."""
-        with patch('py_utils.housekeeper.Housekeeper.housekeep_by_age') as mock_housekeep_age:
+        with patch(
+            "py_utils.housekeeper.Housekeeper.housekeep_by_age"
+        ) as mock_housekeep_age:
             mock_housekeep_age.return_value = 2
 
             result = cleanup_directory("/test/dir", days_old=10, keep_count=5)

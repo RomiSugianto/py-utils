@@ -20,10 +20,7 @@ class TestLogger:
     def test_setup_logger_with_file(self, tmp_path):
         """Test setting up logger with both console and file handlers."""
         log_file = tmp_path / "test.log"
-        logger = Logger.setup_logger(
-            name="test_logger",
-            log_file=str(log_file)
-        )
+        logger = Logger.setup_logger(name="test_logger", log_file=str(log_file))
         assert isinstance(logger, logging.Logger)
         assert logger.name == "test_logger"
 
@@ -98,7 +95,7 @@ def test_log_file_creation(tmp_path):
 
     # Check that file was created and contains the message
     assert log_file.exists()
-    with open(log_file, 'r') as f:
+    with open(log_file, "r") as f:
         content = f.read()
         assert "Test message" in content
         assert "file_test" in content  # Logger name should be in log

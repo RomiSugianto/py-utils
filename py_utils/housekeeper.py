@@ -3,11 +3,12 @@ from datetime import datetime, timedelta
 from typing import Optional
 from pathlib import Path
 
+
 class Housekeeper:
     """A helper class for file housekeeping operations."""
 
     @staticmethod
-    def housekeep_by_age(directory: str, days_old: int, confirm: bool = True) -> int:
+    def housekeep_by_age(directory: str, days_old: int, confirm: bool = False) -> int:
         """
         Delete files older than the specified number of days based on modification time.
 
@@ -28,7 +29,7 @@ class Housekeeper:
 
         # Get all files with their modification times
         files_to_delete = []
-        for file_path in Path(directory).rglob('*'):
+        for file_path in Path(directory).rglob("*"):
             if file_path.is_file() and file_path.stat().st_mtime < cutoff_timestamp:
                 files_to_delete.append(file_path)
 
@@ -37,13 +38,15 @@ class Housekeeper:
             return 0
 
         if confirm:
-            print(f"Will delete {len(files_to_delete)} files older than {days_old} days:")
+            print(
+                f"Will delete {len(files_to_delete)} files older than {days_old} days:"
+            )
             for file in files_to_delete[:5]:  # Show first 5
                 print(f"  {file}")
             if len(files_to_delete) > 5:
                 print(f"  ... and {len(files_to_delete) - 5} more")
             response = input("Proceed? (y/N): ")
-            if response.lower() != 'y':
+            if response.lower() != "y":
                 print("Deletion cancelled.")
                 return 0
 
@@ -58,7 +61,9 @@ class Housekeeper:
         return deleted_count
 
     @staticmethod
-    def housekeep_by_count(directory: str, keep_count: int, confirm: bool = True) -> int:
+    def housekeep_by_count(
+        directory: str, keep_count: int, confirm: bool = False
+    ) -> int:
         """
         Keep only the N newest files in the directory based on modification time.
         Deletes all other files.
@@ -76,7 +81,7 @@ class Housekeeper:
 
         # Get all files with their modification times
         files = []
-        for file_path in Path(directory).rglob('*'):
+        for file_path in Path(directory).rglob("*"):
             if file_path.is_file():
                 files.append((file_path, file_path.stat().st_mtime))
 
@@ -91,9 +96,11 @@ class Housekeeper:
         files_to_delete = files[keep_count:]
 
         if confirm:
-            print(f"Will delete {len(files_to_delete)} files, keeping {keep_count} newest.")
+            print(
+                f"Will delete {len(files_to_delete)} files, keeping {keep_count} newest."
+            )
             response = input("Proceed? (y/N): ")
-            if response.lower() != 'y':
+            if response.lower() != "y":
                 print("Deletion cancelled.")
                 return 0
 
@@ -107,8 +114,11 @@ class Housekeeper:
 
         return deleted_count
 
+
 # Convenience function
-def cleanup_directory(directory: str, days_old: Optional[int] = None, keep_count: Optional[int] = None) -> int:
+def cleanup_directory(
+    directory: str, days_old: Optional[int] = None, keep_count: Optional[int] = None
+) -> int:
     """
     Convenience function for housekeeping operations.
 

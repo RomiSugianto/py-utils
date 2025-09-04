@@ -21,11 +21,9 @@ __all__ = [
     # Logger
     "Logger",
     "get_logger",
-
     # Email
     "EmailHelper",
     "send_quick_email",
-
     # Housekeeper
     "Housekeeper",
     "cleanup_directory",
