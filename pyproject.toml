@@ -1,0 +1,54 @@
+[project]
+name = "py-utils"
+version = "0.1.0"
+description = "A comprehensive collection of Python utility helpers for logging, email, and file housekeeping"
+authors = [{name = "Your Name", email = "your.email@example.com"}]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.13"
+keywords = ["utilities", "helpers", "logging", "email", "housekeeping", "python"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/romisugianto/py-utils"
+Repository = "https://github.com/romisugianto/py-utils"
+Issues = "https://github.com/romisugianto/py-utils/issues"
+Documentation = "https://github.com/romisugianto/py-utils#readme"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=4.0.0",
+]
+docs = [
+    "sphinx>=5.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["py_utils"]
